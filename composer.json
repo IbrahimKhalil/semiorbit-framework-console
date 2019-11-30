@@ -1,0 +1,32 @@
+{
+  "name": "semiorbit/fwk-console",
+  "description": "Semiorbit Console for Semiorbit PHP Framework",
+  "keywords": ["framework", "php", "semiorbit", "console"],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://framework.semiorbit.com/console",
+  "authors": [
+    {
+      "name": "Ibrahim Khalil Khalbous",
+      "email": "ibrahim@semiorbit.com"
+    },
+    {
+      "name": "Semiorbit Solution Co. LLC",
+      "email": "framework@semiorbit.com",
+      "homepage": "https://semiorbit.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.0"
+  },
+  "autoload": {
+    "files": [
+      "src/register.php"
+    ],
+    "psr-4": {
+      "SemiorbitFwkConsole\\": "src/app/",
+      "SemiorbitFwkLibrary\\": "src/lib/"
+    }
+  },
+  "minimum-stability": "dev"
+}
