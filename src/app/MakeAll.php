@@ -17,7 +17,7 @@ class MakeAll extends Command
 
     public function Configure()
     {
-        $this->Define("{name} {-r}");
+        $this->Define("{name} {--table=1} {--case=p} {-r}");
     }
 
 
@@ -30,8 +30,13 @@ class MakeAll extends Command
         $overwrite = boolval($this->Flag('r')->Value());
 
 
+        $table = $this->Option('table')->Value();
 
-        $model = new ModelBuilder($name, '1');
+        $naming_case = $this->Option('case')->Value();
+
+
+
+        $model = new ModelBuilder($name, $table, $naming_case);
 
         $result = $model->Create($overwrite);
 
