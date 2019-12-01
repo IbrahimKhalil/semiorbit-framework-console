@@ -5,7 +5,7 @@
  *------------------------------------------------------------------------------------------------
  */
 
-namespace App\{$PKG};
+namespace {$PKG_NS};
 
 
 use Semiorbit\Component\PackageServiceProvider;

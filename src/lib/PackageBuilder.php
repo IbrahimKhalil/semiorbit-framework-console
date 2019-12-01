@@ -8,6 +8,7 @@ use Semiorbit\Base\Application;
 use Semiorbit\Cache\FrameworkCache;
 use Semiorbit\Config\Config;
 use Semiorbit\Output\BasicTemplate;
+use Semiorbit\Support\Path;
 use Semiorbit\Support\Str;
 
 class PackageBuilder
@@ -23,17 +24,37 @@ class PackageBuilder
 
     public $ProviderPath;
 
+    public $Namespace;
+
 
     public function __construct($package)
     {
 
+        if (strstr($package, "/")) {
+
+            $parts = explode("/", $package);
+
+            $last = count($parts) - 1;
+
+            $parts[$last] = Str::PascalCase($last);
+
+            $package = $parts[$last];
+
+            $path = implode("/", $parts);
+
+            $ns = implode("\\", $parts);
+
+        }
+
         $this->Package = Str::PascalCase($package);
 
-        $this->Path = Application::Service()->AppPath($this->Package);
+        $this->Path = Application::Service()->AppPath($path ?? $this->Package);
 
         $this->PackageID = Str::SnakeCase($this->Package);
 
         $this->ProviderPath = $this->Path . "/{$this->Package}ServiceProvider.php";
+
+        $this->Namespace = $ns ?? "App\\{$this->Package}";
 
     }
 
@@ -48,9 +69,11 @@ class PackageBuilder
 
                 $template = BasicTemplate::From(__dir__ . '/templates/package.tpl');
 
-                $template->With('PKG_ID', $this->PackageID);
+                $template->With('PKG_ID', $this->PackageID)
 
-                $template->With('PKG', $this->Package);
+                    ->With('PKG', $this->Package)
+
+                    ->With('PKG_NS', $this->Namespace);
 
 
                 $this->Output = $template->Render();
@@ -81,7 +104,7 @@ class PackageBuilder
 
         $prep_services = [];
 
-        if (! in_array($cur = "App\\{$this->Package}\\{$this->Package}ServiceProvider", $services)) {
+        if (! in_array($cur = "{$this->Namespace}\\{$this->Package}ServiceProvider", $services)) {
 
             $services[] = $cur;
 
