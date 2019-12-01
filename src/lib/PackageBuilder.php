@@ -36,7 +36,7 @@ class PackageBuilder
 
             $last = count($parts) - 1;
 
-            $parts[$last] = Str::PascalCase($last);
+            $parts[$last] = Str::PascalCase($parts[$last]);
 
             $package = $parts[$last];
 
