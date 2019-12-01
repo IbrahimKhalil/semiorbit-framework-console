@@ -42,7 +42,7 @@ class PackageBuilder
 
             $path = implode("/", $parts);
 
-            $ns = implode("\\", $parts);
+            $ns = "App\\" . implode("\\", $parts);
 
         }
 
