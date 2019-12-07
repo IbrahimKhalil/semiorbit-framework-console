@@ -1,6 +1,5 @@
 <?php
 
-
 namespace SemiorbitFwkLibrary;
 
 
@@ -141,9 +140,12 @@ class ModelBuilder
         $tbl_description = DB::Table("DESCRIBE {$table}");
 
 
-        $field = [];
-
         while ($db_fld = $tbl_description->Read()) {
+
+
+            $customFld = new ModelCustomFieldDefiner();
+
+            $field = [];
 
 
             $field['FIELD_NAME'] = $db_fld['Field'];
@@ -151,12 +153,20 @@ class ModelBuilder
             $field['NAME'] = $this->PrepareFieldName($db_fld);
 
 
-            list($control, $props, $comment) = [null, [], null];
+            [$control, $props, $comment] = [null, [], null];
 
 
             foreach (self::ListDefiners() as $handle => $definer) {
 
-                list($control, $props, $comment) = call_user_func($definer, $db_fld);
+                /**@var ModelCustomFieldDefiner $customFld */
+
+                $customFld = call_user_func($definer, $db_fld);
+
+                $control = $customFld->Control();
+
+                $props = $customFld->Props();
+
+                $comment = $customFld->Comment();
 
                 if ($control) break;
 
@@ -164,7 +174,7 @@ class ModelBuilder
 
             if (!$control)
 
-                list($control, $props, $comment) = $this->DefineField($db_fld);
+                [$control, $props, $comment] = $this->DefineField($db_fld);
 
 
             $field['CONTROL'] = $control;
@@ -179,6 +189,17 @@ class ModelBuilder
             $field['PROPS'] = implode('', $props);
 
             $field['COMMENT'] = $comment;
+
+
+
+            $field['BASIC'] = !$customFld->IsCustom();
+
+            $field['PROP_DEF'] = $customFld->PropDef();
+
+            $field['NS'] = $customFld->Namespace();
+
+            $field['DEFINE_FIELD_NAME'] = $customFld->DefineFieldName();
+
 
 
             $fields[$field['NAME']] = $field;
