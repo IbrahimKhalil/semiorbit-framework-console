@@ -135,6 +135,8 @@ class ModelBuilder
     public function GenerateFieldTemplate(string $table): array
     {
 
+        static $ns = [];
+
         $fields = [];
 
         $tbl_description = DB::Table("DESCRIBE {$table}");
@@ -180,11 +182,15 @@ class ModelBuilder
             $field['CONTROL'] = $control;
 
 
-            $props[] = $this->IsRequired($db_fld);
+            if (! $customFld->IsCustom()) {
 
-            $props[] = $this->DefaultValue($db_fld);
+                $props[] = $this->IsRequired($db_fld);
 
-            $props[] = $this->IsReadOnly($db_fld);
+                $props[] = $this->DefaultValue($db_fld);
+
+                $props[] = $this->IsReadOnly($db_fld);
+
+            }
 
             $field['PROPS'] = implode('', $props);
 
@@ -196,7 +202,13 @@ class ModelBuilder
 
             $field['PROP_DEF'] = $customFld->PropDef();
 
-            $field['NS'] = $customFld->Namespace();
+            if (!in_array($customFld->Namespace(), $ns)) {
+
+                $field['NS'] = $customFld->Namespace();
+
+                $ns[] = $customFld->Namespace();
+
+            }
 
             $field['DEFINE_FIELD_NAME'] = $customFld->DefineFieldName();
 
