@@ -8,7 +8,6 @@ use Semiorbit\Base\Application;
 use Semiorbit\Cache\FrameworkCache;
 use Semiorbit\Config\Config;
 use Semiorbit\Output\BasicTemplate;
-use Semiorbit\Support\Path;
 use Semiorbit\Support\Str;
 
 class PackageBuilder
@@ -73,7 +72,9 @@ class PackageBuilder
 
                     ->With('PKG', $this->Package)
 
-                    ->With('PKG_NS', $this->Namespace);
+                    ->With('PKG_NS', $this->Namespace)
+
+                    ->With('API_DIR', Config::ApiControllersDir());
 
 
                 $this->Output = $template->Render();
@@ -138,7 +139,19 @@ class PackageBuilder
 
             mkdir($this->Path . '/Http');
 
+            if (Config::ApiControllersDir())
+
+                mkdir($this->Path . '/Http/' . Config::ApiControllersDir());
+
             mkdir($this->Path . '/routes');
+
+            if (! Config::ApiMode())
+
+                file_put_contents($this->Path . '/routes/web.php', '<?php');
+
+            if (Config::ApiMode() || Config::ApiControllersDir())
+
+                file_put_contents($this->Path . '/routes/api.php', '<?php');
 
 
             if ($all_folders) {

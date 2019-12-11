@@ -33,6 +33,8 @@ class {$PKG}ServiceProvider extends PackageServiceProvider
 
             ->setControllersPath(__DIR__ . '/Http')
 
+            ->setApiControllersDir('{$API_DIR}')
+
             ->setModelsNameSpace(__NAMESPACE__)
 
             ->setControllersNamespace(__NAMESPACE__ . '\Http');

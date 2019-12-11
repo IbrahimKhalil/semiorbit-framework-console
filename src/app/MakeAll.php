@@ -6,7 +6,6 @@ namespace SemiorbitFwkConsole;
 
 
 use Semiorbit\Config\Config;
-use Semiorbit\Support\Str;
 use Semiorbit\Console\Command;
 use SemiorbitFwkLibrary\ControllerBuilder;
 use SemiorbitFwkLibrary\ModelBuilder;
@@ -44,15 +43,30 @@ class MakeAll extends Command
 
 
 
-        $controller = new ControllerBuilder($name);
+        if ((Config::ApiMode() || Config::ApiControllersDir())) {
 
-        $result = $controller->Create($overwrite);
+            $controller = new ControllerBuilder($name, 'Rest');
+
+            $result = $controller->Create($overwrite);
 
 
-        $ctrl_result = [$result, $controller];
+            $rest_ctrl_result = [$result, $controller];
+
+        }
+
+        if (! Config::ApiMode()) {
+
+            $controller = new ControllerBuilder($name, 'Rest');
+
+            $result = $controller->Create($overwrite);
 
 
-        return [$model_res, $ctrl_result];
+            $ctrl_result = [$result, $controller];
+
+        }
+
+
+        return [$model_res, $ctrl_result ?? [], $rest_ctrl_result ?? []];
 
 
 
@@ -68,12 +82,14 @@ class MakeAll extends Command
     public function CliHandle($res)
     {
 
-        [$model_res, $ctrl_result] = $res;
+        [$model_res, $ctrl_result, $rest_ctrl_result] = $res;
 
 
         (new MakeModel())->CliHandle($model_res);
 
-        (new MakeController())->CliHandle($ctrl_result);
+        if ($ctrl_result) (new MakeController())->CliHandle($ctrl_result);
+
+        if ($rest_ctrl_result) (new MakeController())->CliHandle($rest_ctrl_result);
 
 
         return null;

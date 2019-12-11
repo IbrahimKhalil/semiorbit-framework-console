@@ -87,6 +87,12 @@ class ControllerBuilder
 
         }
 
+        $defined_api_ctrl_dir = $this->Package ? Package::Select($this->Package)->ApiControllersDir() : Config::ApiControllersDir();
+
+        $api_sub_dir = $this->Type == 'Rest' && $defined_api_ctrl_dir ? $defined_api_ctrl_dir . '/' : '';
+
+        $api_sub_ns = '\\' . str_replace('/', '\\', rtrim($api_sub_dir, '/'));
+
 
         $this->FileExt = Config::StructureExtension(Config::GROUP__CONTROLLERS, Config::FrameworkConfig()[Config::GROUP__CONTROLLERS . '_ext']);
 
@@ -94,15 +100,15 @@ class ControllerBuilder
 
         $this->Path = (($this->Package) ?
 
-            Package::Select($this->Package)->ControllersPath() :
+            Package::Select($this->Package)->ControllersPath() . $api_sub_dir :
 
-            Application::Service()->ModelsPath()) . $this->FileName;
+            Application::Service()->ControllersPath() . $api_sub_dir) . $this->FileName;
 
         $this->Namespace = ($this->Package) ?
 
-            Package::Select($this->Package)->ControllersNamespace() :
+            Package::Select($this->Package)->ControllersNamespace() . $api_sub_ns :
 
-            'App\\Http';
+            'App\\Http' . $api_sub_ns;
 
 
     }
