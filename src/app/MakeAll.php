@@ -56,7 +56,7 @@ class MakeAll extends Command
 
         if (! Config::ApiMode()) {
 
-            $controller = new ControllerBuilder($name, 'Rest');
+            $controller = new ControllerBuilder($name, 'Base');
 
             $result = $controller->Create($overwrite);
 

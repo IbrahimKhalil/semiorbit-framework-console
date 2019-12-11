@@ -89,9 +89,9 @@ class ControllerBuilder
 
         $defined_api_ctrl_dir = $this->Package ? Package::Select($this->Package)->ApiControllersDir() : Config::ApiControllersDir();
 
-        $api_sub_dir = $this->Type == 'Rest' && $defined_api_ctrl_dir ? $defined_api_ctrl_dir . '/' : '';
+        $api_sub_dir = $this->Type == 'Rest' && $defined_api_ctrl_dir ? $defined_api_ctrl_dir : '';
 
-        $api_sub_ns = '\\' . str_replace('/', '\\', rtrim($api_sub_dir, '/'));
+        $api_sub_ns = $api_sub_dir ? '\\' . str_replace('/', '\\', rtrim($api_sub_dir, '/')) : '';
 
 
         $this->FileExt = Config::StructureExtension(Config::GROUP__CONTROLLERS, Config::FrameworkConfig()[Config::GROUP__CONTROLLERS . '_ext']);
