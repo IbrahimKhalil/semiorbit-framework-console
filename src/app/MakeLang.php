@@ -44,7 +44,7 @@ class MakeLang extends Command
 
         foreach ($lang as $lang_code) {
 
-            $files[$lang_code] = new LangBuilder($lang_code, $table);
+            $files[$lang_code] = new LangBuilder($dict_name, $lang_code, $table);
 
             $result[$lang_code] = ($files[$lang_code])->Create($overwrite, $update);
 
@@ -52,7 +52,7 @@ class MakeLang extends Command
 
 
 
-        return [$result, $files];
+        return [$result ?? [], $files ?? []];
 
 
     }
@@ -75,7 +75,7 @@ class MakeLang extends Command
             /** @var LangBuilder $file */
 
 
-            switch ($result) {
+            switch ($result[$lang]) {
 
                 case 200:
 

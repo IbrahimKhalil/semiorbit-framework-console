@@ -15,7 +15,7 @@ class {$CLASS_NAME} extends {$CTRL_TYPE}Controller
 {
 
     {IF $DATASET}
-    const DataSet = "{$DATASET}";
+    const DataSet = {$DATASET}::class;
 
     {/IF}
 

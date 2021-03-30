@@ -5,6 +5,7 @@ namespace SemiorbitFwkLibrary;
 
 
 use Semiorbit\Base\Application;
+use Semiorbit\Component\Package;
 use Semiorbit\Config\Config;
 use Semiorbit\Db\DB;
 use Semiorbit\Output\BasicTemplate;
@@ -25,24 +26,48 @@ class LangBuilder
 
     public $Output;
 
+    public $Package;
+
+    public $LangDir;
 
 
 
-    public function __construct($lang, $table = null)
+
+    public function __construct($name, $lang, $table = null)
     {
+
+        if (strstr($name, '::'))
+
+            [$pkg, $name] = explode('::', $name, 2);
+
 
         $this->Lang = $lang;
 
         $this->Table = $table;
 
+        $this->Package = $pkg ?? GlobalVars::Read('pkg');
+
         $this->FileExt = Config::StructureExtension(Config::GROUP__LANG, Config::FrameworkConfig()[Config::GROUP__LANG . '_ext']);
 
-        $this->FileName = Str::ParamCase($table) . ".{$lang}" . $this->FileExt;
+        $this->FileName = Str::ParamCase($name) . ".{$lang}" . $this->FileExt;
 
-        $this->Path = Application::Service()->BasePath(Config::StructureDirectory(Config::GROUP__LANG, 'lang') . "/{$lang}/" . $this->FileName) ;
 
+        $this->LangDir = (($this->Package) ?
+
+            Package::Select($this->Package)->LangPath() . "{$lang}/":
+
+            Application::Service()->BasePath(Config::StructureDirectory(Config::GROUP__LANG, 'lang') . "{$lang}/"));
+
+
+        if (! file_exists($this->LangDir))
+
+            mkdir($this->LangDir);
+
+
+        $this->Path  = $this->LangDir . $this->FileName;
 
     }
+
 
     public function Create($overwrite = false, $update = false)
     {

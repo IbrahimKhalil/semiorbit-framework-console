@@ -233,7 +233,7 @@ class ModelBuilder
 
             case self::NAMING_PASCAL_CASE:
 
-                $name = Str::PascalCase($field_name);
+                $name = Str::PascalCaseKeepLang($field_name);
 
                 break;
 
@@ -281,7 +281,11 @@ class ModelBuilder
 
                 default:
 
-                    return "->setDefaultValue({$db_fld['Default']})";
+                    $val = (is_numeric($db_fld['Default']) || is_bool($db_fld['Default'])) ?
+
+                        $db_fld['Default'] : "\"{$db_fld['Default']}\"";
+
+                    return "->setDefaultValue({$val})";
 
             }
         }
@@ -407,6 +411,17 @@ class ModelBuilder
             $control = 'ID';
 
             $props[] = "->IsUUID_SHORT()";
+
+        }
+
+        // ID
+        //==============================================================================================================
+
+        elseif ($db_fld['Key'] == 'PRI') {
+
+            $control = 'ID';
+
+            $props[] = $this->DataType($data_type, $length);
 
         }
 

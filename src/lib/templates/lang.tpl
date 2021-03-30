@@ -1,5 +1,5 @@
 <?php
-return array(
+return [
 
     "__index" => "{$INDEX_TITLE}",
 
@@ -15,4 +15,4 @@ return array(
 
     {/LOOP}
 
-);
+];
