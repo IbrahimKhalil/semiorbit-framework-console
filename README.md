@@ -34,6 +34,15 @@ php sc make:controller {ctrl} {-a} {-b} {-c} {-r}
 php sc ctrl {ctrl} {-a} {-b} {-c} {-r}
 ```
 
+`ctrl` Controller name
+
+`-a` RestController (Api Controller)
+
+`-b` BaseController
+
+`-c` clean
+`-r` overwrite
+
 ##
 #### Create Package
 
@@ -44,6 +53,12 @@ php sc make:package {package} {-r} {-f}
 ```shell
 php sc pkg {package} {-r} {-f}
 ```
+
+`package` Package name
+
+`-r` overwrite
+
+'-f' create all package folders
 
 
 ##
