@@ -33,7 +33,22 @@ class UseGlobals extends Command
 
         $value = $this->Argument('value')->Value();
 
-        if ($clear || $clear = ($value == 'null'))
+//        try {
+//
+//
+//
+//        } catch (\Exception $exception) {
+//
+//            $this->Cli()->Writeln('<error>Invalid Arguments! Please enter:</error>');
+//
+//            $this->Cli()->Writeln('<comment>php sc use {key} {value}</comment>');
+//
+//            return [null, null, null];
+//
+//        }
+
+
+        if ($clear)
 
             GlobalVars::Clear($key);
 
@@ -60,6 +75,10 @@ class UseGlobals extends Command
         if ($clear)
 
             $this->Cli()->Writeln("<comment>{$key} Unused!</comment>");
+
+        else if (!$key || $value === null)
+
+            $this->Cli()->Writeln("<error>Invalid key or value</error>");
 
         else
 

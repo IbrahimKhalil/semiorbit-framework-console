@@ -31,8 +31,6 @@ class LangBuilder
     public $LangDir;
 
 
-
-
     public function __construct($name, $lang, $table = null)
     {
 
@@ -54,17 +52,17 @@ class LangBuilder
 
         $this->LangDir = (($this->Package) ?
 
-            Package::Select($this->Package)->LangPath() . "{$lang}/":
+            Package::Select($this->Package)->LangPath() . "{$lang}/" :
 
-            Application::Service()->BasePath(Config::StructureDirectory(Config::GROUP__LANG, 'lang') . "{$lang}/"));
-
-
-        if (! file_exists($this->LangDir))
-
-            mkdir($this->LangDir);
+            Application::Service()->BasePath(Config::StructureDirectory(Config::GROUP__LANG, 'lang') . "/{$lang}/"));
 
 
-        $this->Path  = $this->LangDir . $this->FileName;
+        if (!file_exists($this->LangDir))
+
+            mkdir($this->LangDir, 0777, true);
+
+
+        $this->Path = $this->LangDir . $this->FileName;
 
     }
 
@@ -94,7 +92,6 @@ class LangBuilder
     }
 
 
-
     public function GenerateFieldTemplate(string $table): array
     {
 
@@ -111,7 +108,6 @@ class LangBuilder
             $field['NAME'] = $db_fld['Field'];
 
             $field['TRANS'] = static::FormatValue($field['NAME']);
-
 
 
             $fields[$field['NAME']] = $field;
@@ -131,12 +127,65 @@ class LangBuilder
 
         $formatted_str = Str::SplitByCaps($formatted_str, " ");
 
-        $formatted_str = preg_replace("/(_)(en|ar|tr|fr|so|no)$/", " ($2)", $formatted_str);
+        $list_lang = implode('|', Config::Languages());
+
+        $formatted_str = preg_replace("/(_)(".$list_lang.")$/", " ($2)", $formatted_str);
 
 
         return $formatted_str;
     }
 
+
+    public static function CopyLang($lang, $to_lang, $pkg = null, $overwrite = false)
+    {
+
+        $pkg = $pkg ?? GlobalVars::Read('pkg');
+
+        $lang_dir = (($pkg) ?
+
+            Package::Select($pkg)->LangPath() . "{$lang}/" :
+
+            Application::Service()->BasePath(Config::StructureDirectory(Config::GROUP__LANG, 'lang') . "/{$lang}/"));
+
+
+        if (!file_exists($lang_dir)) return false;
+
+
+        $to_lang_dir = (($pkg) ?
+
+            Package::Select($pkg)->LangPath() . "{$to_lang}/" :
+
+            Application::Service()->BasePath(Config::StructureDirectory(Config::GROUP__LANG, 'lang') . "/{$to_lang}/"));
+
+
+        if (!file_exists($to_lang_dir)) mkdir($to_lang_dir, 0777, true);
+
+
+        if ($files = scandir($lang_dir, SCANDIR_SORT_NONE)) {
+
+            foreach ($files as $file) {
+
+                if (ends_with($file, '.inc')) {
+
+                    $dest = $to_lang_dir . str_replace(".{$lang}.inc", ".{$to_lang}.inc", $file);
+
+                    if ($overwrite == false && file_exists($dest)) continue;
+
+                    if (!copy($lang_dir . $file, $dest))
+
+                        return false;
+
+                }
+
+            }
+
+
+        } else return false;
+
+
+        return true;
+
+    }
 
 
 

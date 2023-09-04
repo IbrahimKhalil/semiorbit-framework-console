@@ -5,11 +5,8 @@ namespace SemiorbitFwkConsole;
 
 
 
-use Semiorbit\Config\Config;
-use Semiorbit\Support\Str;
 use Semiorbit\Console\Command;
 use SemiorbitFwkLibrary\ControllerBuilder;
-use SemiorbitFwkLibrary\ModelBuilder;
 
 class MakeController extends Command
 {

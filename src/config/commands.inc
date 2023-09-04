@@ -1,6 +1,7 @@
 <?php
 
 use SemiorbitFwkConsole\CacheClear;
+use SemiorbitFwkConsole\CopyLang;
 use SemiorbitFwkConsole\MakeAll;
 use SemiorbitFwkConsole\MakeConfig;
 use SemiorbitFwkConsole\MakeController;
@@ -45,6 +46,8 @@ return [
 
     'ctrl' => MakeController::class,
 
-    'mk' => MakeAll::class
+    'mk' => MakeAll::class,
+
+    'cplng' => CopyLang::class
 
 ];

@@ -102,7 +102,7 @@ class ControllerBuilder
 
             Package::Select($this->Package)->ControllersPath() . $api_sub_dir :
 
-            Application::Service()->ControllersPath() . $api_sub_dir) . $this->FileName;
+            Application::Service()->ControllersPath() . $api_sub_dir) . '/' . $this->FileName;
 
         $this->Namespace = ($this->Package) ?
 
