@@ -184,7 +184,7 @@ class ModelBuilder
 
             if (! $customFld->IsCustom()) {
 
-                $props[] = $this->IsRequired($db_fld, $control);
+                $props[] = $this->IsRequired($db_fld);
 
                 $props[] = $this->DefaultValue($db_fld);
 
@@ -257,9 +257,9 @@ class ModelBuilder
     }
 
 
-    protected function IsRequired($db_fld, $control)
+    protected function IsRequired($db_fld)
     {
-        return $control === 'Checkbox' ? (($db_fld['Null'] == 'NO') ? '' : '->setRequired(false)') : (($db_fld['Null'] == 'NO') ? '->setRequired()' : '');
+        return ($db_fld['Null'] == 'NO') ? '->setRequired()' : '';
     }
 
 
