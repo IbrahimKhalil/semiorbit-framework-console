@@ -8,6 +8,8 @@ use SemiorbitFwkConsole\MakeController;
 use SemiorbitFwkConsole\MakeLang;
 use SemiorbitFwkConsole\MakeModel;
 use SemiorbitFwkConsole\MakePackage;
+use SemiorbitFwkConsole\MakeSqlFile;
+use SemiorbitFwkConsole\MigrateSql;
 use SemiorbitFwkConsole\UseGlobals;
 
 return [
@@ -48,6 +50,12 @@ return [
 
     'mk' => MakeAll::class,
 
-    'cplng' => CopyLang::class
+    'cplng' => CopyLang::class,
+
+    'mksql' => MakeSqlFile::class,
+
+    'migrate:sql' => MigrateSql::class,
+
+    'db' => MigrateSql::class,
 
 ];

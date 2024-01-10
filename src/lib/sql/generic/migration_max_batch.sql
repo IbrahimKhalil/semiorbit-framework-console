@@ -1,0 +1,1 @@
+SELECT MAX(batch) AS max_batch FROM migrations

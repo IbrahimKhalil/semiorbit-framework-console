@@ -106,3 +106,34 @@ php sc ccf
 php sc cc
 ```
 
+## SQL Migration
+
+##### Create SQL files
+
+Creates sql migration files in src/database/{con} and src/database/{con}/rollback
+```shell
+php sc mksql {table} {--con}
+```
+
+In the generated sql files write your sql queries that creates your tables, fields, indices...etc
+In rollback folder write queries that reverse operations.
+
+#### Migrate
+
+```shell
+php sc migrate:sql {-r} {--con}
+```
+OR:
+```shell
+php sc db
+```
+
+#### Rollback
+
+```shell
+php sc migrate:sql -r
+```
+OR:
+```shell
+php sc db -r
+```
