@@ -2,7 +2,7 @@
   "name": "semiorbit/fwk-console",
   "description": "Semiorbit Console for Semiorbit PHP Framework",
   "keywords": ["framework", "php", "semiorbit", "console"],
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "MIT",
   "homepage": "https://framework.semiorbit.com/console",
   "authors": [

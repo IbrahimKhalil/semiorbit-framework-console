@@ -93,15 +93,56 @@ class SqlMigrate
 
                 $sql_insert = str_replace('@batch', "{$batch}", $sql_insert);
 
-                if (DB::WithConnection($this->Connection)->Execute($sql_insert)) {
+                if (DB::WithConnection($this->Connection)->Exec($sql_insert)) {
 
                     if ($sql = file_get_contents($this->_SqlPath . $file)) {
 
-                        return DB::WithConnection($this->Connection)->ExecuteAll($sql);
+                        $blocks = self::ExtractQueries($sql);
+
+                        foreach ($blocks as $block) {
+
+                            if (is_empty($block)) continue;
+
+                            $res = DB::WithConnection($this->Connection)->ExecuteAll($block);
+
+                            DB::WithConnection($this->Connection)->FreeResult($res);
+
+                            // if all failed (false) or partially failed (null)
+
+                            if (!$res) {
+
+                                print_r(DB::WithConnection($this->Connection)->ErrorInfo());
+
+                                break;
+
+                            }
+
+                        }
+
+
+                        if ($res === false) {
+
+                            // 4- Nothing executed ... all failed: then remove row from migrations table
+
+                            $rem_sql = file_get_contents(
+
+                                Utils::SqlFilePath($this->Connection, 'migration_rem')
+
+                            );
+
+                            $rem_sql = str_replace('@file', "\"{$filename_without_ext}\"", $rem_sql);
+
+                            DB::WithConnection($this->Connection)->Execute($rem_sql);
+
+                        }
+
+                        return $res;
 
                     }
 
                 } else {
+
+                    print_r(DB::WithConnection($this->Connection)->ErrorInfo());
 
                     // Don't continue
 
@@ -138,9 +179,12 @@ class SqlMigrate
 
         // 3- Execute it
 
-        $res = DB::ExecuteAll($rollback_sql);
+        $res = DB::WithConnection($this->Connection)->ExecuteAll($rollback_sql);
 
-        if ($res !== false) {
+        DB::WithConnection($this->Connection)->FreeResult($res);
+
+
+        if ($res !== false && $res !== null) {
 
             // 4- Success: then remove row from migrations table
 
@@ -152,11 +196,13 @@ class SqlMigrate
 
             $rem_sql = str_replace('@file', "\"{$file}\"", $rem_sql);
 
-            DB::Execute($rem_sql);
+            DB::WithConnection($this->Connection)->Exec($rem_sql);
 
             return $res;
 
         } else {
+
+            print_r(DB::WithConnection($this->Connection)->ErrorInfo());
 
             // 5- Failed: return false
 
@@ -177,6 +223,57 @@ class SqlMigrate
         );
 
         DB::WithConnection($this->Connection)->ExecuteAll($sql);
+
+    }
+
+
+    public static function ExtractQueries($sql)
+    {
+
+        $queries = [];
+
+        $sql = preg_replace('/--.*/m', '', $sql);
+
+
+        $sql = preg_replace('/\/\*.*?\*\//s', '', $sql);
+
+
+        $blocks = preg_split('/DELIMITER/i', $sql);
+
+        foreach ($blocks as $q) {
+
+            $q = trim($q);
+
+            if (!$q) continue;
+
+            $q_lines = explode(PHP_EOL, $q);
+
+            if (strlen($q_lines[0]) <= 3) {
+
+                if ($q_lines[0] === ';') {
+
+                    $queries[] = ltrim($q, ';');
+
+                } else {
+
+                    $delimiter = $q_lines[0];
+
+                    $sub_q = explode($delimiter, $q);
+
+                    $queries = [...$queries, ...$sub_q];
+
+                }
+
+            } else {
+
+                $queries[] = $q;
+
+            }
+
+        }
+
+
+        return $queries;
 
     }
 

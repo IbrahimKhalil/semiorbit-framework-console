@@ -74,7 +74,7 @@ class MigrateSql extends Command
 
                         if ($res !== false && $res !== null) {
 
-                            $res_line = 'Rollback: ' . $row['migration'] . " [affected: {$res}]";
+                            $res_line = 'Rollback: ' . $row['migration'] . " [result: ". json_encode($res, true) ."]";
 
                             $migrated[] = $res_line;
 
@@ -101,16 +101,17 @@ class MigrateSql extends Command
 
                 // Sort the files by filename in natural order
 
-                natsort($files);
-
+                sort($files);
 
                 foreach ($files as $file) {
 
                     $res = $migrate->Up($file, $batch);
 
+
+
                     if ($res !== false && $res !== null) {
 
-                        $res_line = $file . " [affected: {$res}]";
+                        $res_line = $file . " [result: " . json_encode($res) . "]";
 
                         $migrated[] = $res_line;
 
@@ -118,7 +119,13 @@ class MigrateSql extends Command
 
                     } else if ($res === false) {
 
+                        $res_line = $file . " [Failed: " . print_r($res, true) . "]";
+
+                        $this->Cli()->Writeln("<error>{$res_line}</error>");
+
                         $err = $file;
+
+                        break;
 
                     }
 
