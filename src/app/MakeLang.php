@@ -9,6 +9,7 @@ use Semiorbit\Config\Config;
 use Semiorbit\Support\Str;
 use Semiorbit\Console\Command;
 use SemiorbitFwkLibrary\LangBuilder;
+use SemiorbitFwkLibrary\Utils;
 
 
 class MakeLang extends Command
@@ -17,7 +18,7 @@ class MakeLang extends Command
 
     public function Configure()
     {
-        $this->Define("{dict} {--table=1} {--lang=0} {-c} {-u} {-r}");
+        $this->Define("{dict} {--table=1} {--lang=0} {--con} {-c} {-u} {-r}");
     }
 
 
@@ -42,9 +43,12 @@ class MakeLang extends Command
         $lang = ($lang == 0) ? Config::Languages() : (array) $lang;
 
 
+        $con = Utils::ConnectionSelector($this);
+
+
         foreach ($lang as $lang_code) {
 
-            $files[$lang_code] = new LangBuilder($dict_name, $lang_code, $table);
+            $files[$lang_code] = new LangBuilder($dict_name, $lang_code, $table, $con);
 
             $result[$lang_code] = ($files[$lang_code])->Create($overwrite, $update);
 

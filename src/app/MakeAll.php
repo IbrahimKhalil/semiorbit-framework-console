@@ -9,6 +9,7 @@ use Semiorbit\Config\Config;
 use Semiorbit\Console\Command;
 use SemiorbitFwkLibrary\ControllerBuilder;
 use SemiorbitFwkLibrary\ModelBuilder;
+use SemiorbitFwkLibrary\Utils;
 
 class MakeAll extends Command
 {
@@ -16,7 +17,7 @@ class MakeAll extends Command
 
     public function Configure()
     {
-        $this->Define("{name} {--table=1} {--case=p} {-r}");
+        $this->Define("{name} {--table=1} {--case=p} {-r} {--con}");
     }
 
 
@@ -33,9 +34,10 @@ class MakeAll extends Command
 
         $naming_case = $this->Option('case')->Value();
 
+        $con = Utils::ConnectionSelector($this);
 
 
-        $model = new ModelBuilder($name, $table, $naming_case);
+        $model = new ModelBuilder($name, $table, $naming_case, $con);
 
         $result = $model->Create($overwrite);
 

@@ -31,8 +31,11 @@ class LangBuilder
     public $LangDir;
 
 
-    public function __construct($name, $lang, $table = null)
+    public function __construct($name, $lang, $table = null, $con = null)
     {
+
+        if ($con) DB::UseConnection($con);
+
 
         if (strstr($name, '::'))
 

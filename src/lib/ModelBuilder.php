@@ -46,8 +46,10 @@ class ModelBuilder
     private $_UseDataType = false;
 
 
-    public function __construct($name, $table = null, $naming_case = self::NAMING_PASCAL_CASE)
+    public function __construct($name, $table = null, $naming_case = self::NAMING_PASCAL_CASE, $con = null)
     {
+
+        if ($con) DB::UseConnection($con);
 
 
         if (strstr($name, '::'))
